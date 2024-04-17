@@ -1,8 +1,24 @@
 // 무한 페이징
 import { useEffect, useState } from "react";
 import { getProducts } from "../api/Product";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const ProductList = () => {
+  const StyledProduct = styled.div`
+    display: flex;
+    img {
+      width: 70%;
+    }
+    div {
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  `;
+  const navigate = useNavigate();
   const [productInfo, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -11,7 +27,7 @@ const ProductList = () => {
     setLoading(true);
     const repsonse = await getProducts(page);
     const newData = repsonse.data;
-    console.log("page : " + page);
+    // console.log("page : " + page);
     // console.log(repsonse.data);
     setProducts((prev) => [...prev, ...newData]);
     setPage((prev) => prev + 1);
@@ -46,17 +62,26 @@ const ProductList = () => {
       window.removeEventListener("scroll", scroll); //동일 페이지가 반복되는 것을  clean하기 위해
     };
   }, [page, loading]); // 페이지가 변경될때마다 일어나야하기에
+
+  const detail = (code) => {
+    navigate("/" + code);
+  };
   return (
     <>
       <section className="category-best container">
         {productInfo.map((product) => (
-          <div key={product.prodCode}>
-            <h2>{product.prodName}</h2>
-            <p> {product.price}</p>
+          <StyledProduct
+            key={product.prodCode}
+            onClick={() => detail(product.prodCode)}
+          >
+            <div>
+              <h2>{product.prodName}</h2>
+              <p> {product.price}</p>
+            </div>
             <img
               src={product.prodPhoto?.replace("D:", "http://localhost:8081")}
             />
-          </div>
+          </StyledProduct>
         ))}
       </section>
     </>

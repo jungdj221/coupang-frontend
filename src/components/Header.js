@@ -11,21 +11,40 @@ import {
 import CategoryItem from "./CategoryItem";
 import { getCategories } from "../api/Product";
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { userSave, userLogout } from "../store/user";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const [categories, setCategories] = useState([]);
   const [active, setActive] = useState(false);
 
+  const user = useSelector((state) => {
+    return state.user;
+  });
   const categoriesAPI = async () => {
     const response = await getCategories();
-    console.log(response.data);
+    // console.log(response.data);
     setCategories(response.data);
   };
 
   useEffect(() => {
     categoriesAPI();
+    const token = localStorage.getItem("token");
+    if (token !== null) {
+      dispatch(userSave(JSON.parse(localStorage.getItem("user"))));
+    }
+    // console.log(token);
+    //console.log(user); //빈배열이 뜸 이제 로컬에 담긴거를 가져와야함
   }, []);
-
+  // 로그아웃시 localstorage정보 지우기. user 지우기
+  const logout = (e) => {
+    // console.log("!!!!!");
+    e.preventDefault(); // 기존 정보 유지
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    dispatch(userLogout());
+  };
   return (
     <>
       <div className="tob-bar container">
@@ -34,8 +53,16 @@ const Header = () => {
           <a href="#">입점신청</a>
         </div>
         <div className="tob-bar-right">
-          <a href="#">로그인</a>
-          <a href="#">회원가입</a>
+          {Object.keys(user).length !== 0 ? (
+            <a href="/" onClick={logout}>
+              로그아웃
+            </a>
+          ) : (
+            <>
+              <a href="/login">로그인</a>
+              <a href="#">회원가입</a>
+            </>
+          )}
           <a href="#">고객센터</a>
         </div>
       </div>
