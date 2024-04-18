@@ -3,21 +3,20 @@ import { useEffect, useState } from "react";
 import { getProducts } from "../api/Product";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-const ProductList = () => {
-  const StyledProduct = styled.div`
+const StyledProduct = styled.div`
+  display: flex;
+  img {
+    width: 70%;
+  }
+  div {
+    width: 30%;
     display: flex;
-    img {
-      width: 70%;
-    }
-    div {
-      width: 30%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-  `;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+const ProductList = () => {
   const navigate = useNavigate();
   const [productInfo, setProducts] = useState([]);
   const [page, setPage] = useState(1);
